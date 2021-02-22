@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 
-namespace ConsoleApplication1
+namespace PowerPointToPDF
 {
     class Program
     {

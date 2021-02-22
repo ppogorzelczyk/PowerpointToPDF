@@ -3,43 +3,46 @@ using System.IO;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 
-public sealed class PdfHelper
+namespace PowerPointToPDF
 {
-    private PdfHelper()
+    public sealed class PdfHelper
     {
-    }
-
-    public static PdfHelper Instance { get; } = new PdfHelper();
-
-    internal void SaveImagesAsPdf(List<string> imageFileNames, string pdfFileName, int width = 600, bool deleteImages = false)
-    {
-        using (var document = new PdfDocument())
+        private PdfHelper()
         {
-            foreach (var imageFileName in imageFileNames)
-            {
-                PdfPage page = document.AddPage();
-                using (XImage img = XImage.FromFile(imageFileName))
-                {
-                    // Calculate new height to keep image ratio
-                    var height = (int)(((double)width / (double)img.PixelWidth) * img.PixelHeight);
-
-                    // Change PDF Page size to match image
-                    page.Width = width;
-                    page.Height = height;
-
-                    XGraphics gfx = XGraphics.FromPdfPage(page);
-                    gfx.DrawImage(img, 0, 0, width, height);
-                }
-            }
-            
-            document.Save(pdfFileName);
         }
 
-        if (deleteImages)
+        public static PdfHelper Instance { get; } = new PdfHelper();
+
+        internal void SaveImagesAsPdf(List<string> imageFileNames, string pdfFileName, int width = 600, bool deleteImages = false)
         {
-            foreach (var imageFileName in imageFileNames)
+            using (var document = new PdfDocument())
             {
-                File.Delete(imageFileName);
+                foreach (var imageFileName in imageFileNames)
+                {
+                    PdfPage page = document.AddPage();
+                    using (XImage img = XImage.FromFile(imageFileName))
+                    {
+                        // Calculate new height to keep image ratio
+                        var height = (int)(width / (double)img.PixelWidth * img.PixelHeight);
+
+                        // Change PDF Page size to match image
+                        page.Width = width;
+                        page.Height = height;
+
+                        XGraphics gfx = XGraphics.FromPdfPage(page);
+                        gfx.DrawImage(img, 0, 0, width, height);
+                    }
+                }
+
+                document.Save(pdfFileName);
+            }
+
+            if (deleteImages)
+            {
+                foreach (var imageFileName in imageFileNames)
+                {
+                    File.Delete(imageFileName);
+                }
             }
         }
     }
